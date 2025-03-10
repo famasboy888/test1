@@ -2,6 +2,9 @@ import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 import { exit } from "process";
+// Import routers here
+import userRouter from "./routes/user.route.js";
+
 dotenv.config();
 
 const app = express();
@@ -18,3 +21,5 @@ mongoose
     console.error(err);
     exit(1);
   });
+
+app.use("/api/user", userRouter);

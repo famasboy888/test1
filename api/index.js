@@ -9,8 +9,18 @@ import userRouter from "./routes/user.route.js";
 dotenv.config();
 
 const app = express();
-
 app.use(express.json());
+
+// Use middlewares here
+app.use((error, req, res, next) => {
+  const statusCode = error.statusCode ?? 500;
+  const message = error.message ?? "Internal Server Error";
+  return res.status(statusCode).json({ success: false, statusCode, message });
+});
+
+// Use routers here
+app.use("/api/user", userRouter);
+app.use("/api/auth", authRouter);
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -24,12 +34,3 @@ mongoose
     console.error(err);
     exit(1);
   });
-
-app.use("/api/user", userRouter);
-app.use("/api/auth", authRouter);
-
-app.use((error, req, res, next) => {
-  const statusCode = error.statusCode ?? 500;
-  const message = error.message ?? "Internal Server Error";
-  return res.status(statusCode).json({ success: false, statusCode, message });
-});

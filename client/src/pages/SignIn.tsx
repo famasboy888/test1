@@ -1,16 +1,26 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+} from "../redux/user/userSlice";
 import { IFormData } from "../types/SignUp/signup.type";
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector(
+    (state: { user: { loading: boolean; error: string | null } }) => state.user
+  );
+
   const [formData, setFormData] = useState<IFormData>({
     username: "",
     email: "",
     password: "",
   });
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -20,8 +30,7 @@ export default function SignIn() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      setError(null);
+      dispatch(signInStart());
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: {
@@ -32,19 +41,20 @@ export default function SignIn() {
 
       const data = await res.json();
       if (data.success === false) {
-        setLoading(false);
-        setError(data.message);
+        dispatch(signInFailure(data.message));
         return;
       }
 
-      setError(null);
-      setLoading(false);
+      dispatch(signInSuccess(data));
 
       // Handle successful signup
       navigate("/");
-    } catch {
-      setLoading(false);
-      setError("An error occurred during signup");
+    } catch (err) {
+      if (err instanceof Error) {
+        dispatch(signInFailure(err.message));
+      } else {
+        dispatch(signInFailure("An unknown error occurred"));
+      }
     }
   };
   return (

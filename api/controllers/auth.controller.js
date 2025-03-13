@@ -21,7 +21,7 @@ export const signin = async (req, res, next) => {
   try {
     const validUser = await User.findOne({
       email,
-    });
+    }).exec();
 
     if (!validUser) {
       return next(errorHandler(404, "User not found."));
@@ -48,7 +48,10 @@ export const signin = async (req, res, next) => {
       sameSite: "strict",
       maxAge: 15 * 60 * 1000,
     });
-    res.status(200).send({ message: "Successfull login" });
+
+    const { password: hashedPassword, ...rest } = validUser._doc;
+
+    res.status(200).json(rest);
   } catch (error) {
     next(errorHandler(500, error.message));
   }

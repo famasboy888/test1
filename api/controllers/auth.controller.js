@@ -18,7 +18,6 @@ export const signup = async (req, res, next) => {
 
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
-
   try {
     const validUser = await User.findOne({
       email,
@@ -49,7 +48,7 @@ export const signin = async (req, res, next) => {
       sameSite: "strict",
       maxAge: 15 * 60 * 1000,
     });
-    res.status(200).send("User logged in successfully");
+    res.status(200).send({ message: "Successfull login" });
   } catch (error) {
     next(errorHandler(500, error.message));
   }

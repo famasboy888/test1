@@ -6,17 +6,16 @@ import {
   signInStart,
   signInSuccess,
 } from "../redux/user/userSlice";
-import { IFormData } from "../types/SignUp/signup.type";
+import { ISignInFormData, RootState } from "../types/signin/reduxSignIn";
 
 export default function SignIn() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading, error } = useSelector(
-    (state: { user: { loading: boolean; error: string | null } }) => state.user
+    (state: RootState) => state.user || { loading: false, error: null }
   );
 
-  const [formData, setFormData] = useState<IFormData>({
-    username: "",
+  const [formData, setFormData] = useState<ISignInFormData>({
     email: "",
     password: "",
   });
@@ -40,21 +39,21 @@ export default function SignIn() {
       });
 
       const data = await res.json();
+      console.log("API Response:", data); // Add this line to debug
+
       if (data.success === false) {
         dispatch(signInFailure(data.message));
         return;
       }
 
       dispatch(signInSuccess(data));
-
-      // Handle successful signup
       navigate("/");
-    } catch (err) {
-      if (err instanceof Error) {
-        dispatch(signInFailure(err.message));
-      } else {
-        dispatch(signInFailure("An unknown error occurred"));
-      }
+    } catch (error) {
+      dispatch(
+        signInFailure(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        )
+      );
     }
   };
   return (

@@ -22,6 +22,11 @@ const userSchema = new mongoose.Schema(
       trim: true,
       minlength: 6,
     },
+    avatar: {
+      type: String,
+      default:
+        "https://fastly.picsum.photos/id/237/200/300.jpg?hmac=TmmQSbShHz9CdQm0NkEjx1Dyh_Y984R9LpNrpvH2D_U",
+    },
   },
 
   { timestamps: true }

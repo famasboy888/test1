@@ -56,3 +56,71 @@ export const signin = async (req, res, next) => {
     next(errorHandler(500, error.message));
   }
 };
+
+export const google = async (req, res, next) => {
+  try {
+    const { name, email, photo } = req.body;
+    console.log(email);
+    const user = await User.findOne({
+      email,
+    }).exec();
+
+    if (user) {
+      const token = jwt.sign(
+        {
+          id: user._id,
+        },
+        process.env.JWT_SECRET
+      );
+
+      const { password: hashedPassword, ...rest } = user._doc;
+
+      res.cookie("access_token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict",
+        maxAge: 15 * 60 * 1000,
+      });
+
+      res.status(200).json(rest);
+    } else {
+      const generatePassword = Math.random().toString(36).slice(-8);
+      const hashedPassword = await bcryptjs.hash(generatePassword, 10);
+      const generateUsername =
+        name.split(" ").join("").toLowerCase() +
+        Math.random().toString(36).slice(-4);
+      const newUser = new User({
+        username: generateUsername,
+        email,
+        password: hashedPassword,
+        avatar: photo,
+      });
+
+      const addedUser = await newUser.save();
+
+      if (addedUser) {
+        const token = jwt.sign(
+          {
+            id: addedUser._id,
+          },
+          process.env.JWT_SECRET
+        );
+
+        const { password: hashedPassword, ...rest } = addedUser._doc;
+
+        res.cookie("access_token", token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "strict",
+          maxAge: 15 * 60 * 1000,
+        });
+
+        res.status(200).json(rest);
+      } else {
+        next(errorHandler(500, "User did not create successfully."));
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};

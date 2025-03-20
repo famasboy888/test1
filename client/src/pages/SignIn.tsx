@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import GoogleOAuth from "../components/GoogleOAuth";
 import {
   signInFailure,
   signInStart,
@@ -80,6 +81,7 @@ export default function SignIn() {
         >
           {loading ? "Loading..." : "Sign In"}
         </button>
+        <GoogleOAuth childtext={"SIGN IN WITH GOOGLE"} />
       </form>
       <div className="flex gap-2 mt-5">
         <p>Don&apos;t have an account?</p>

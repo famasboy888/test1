@@ -1,8 +1,9 @@
 import express from "express";
-import { user } from "../controllers/user.controller.js";
+import { uploadProfilePicture } from "../controllers/user.controller.js";
+import { uploadSingleImage } from "../middlewares/cloudinary.middleware.js";
 
 const router = express.Router();
 
-router.get("/test", user);
+router.post("/profile", uploadSingleImage, uploadProfilePicture);
 
 export default router;

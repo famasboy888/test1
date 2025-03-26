@@ -3,8 +3,9 @@ import cloudinary from "../config/cloudinaryConfig.js";
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 
-export const user = (req, res) => {
-  res.send("User route");
+export const testHash = async (req, res) => {
+  const hashedPassword = await bcryptjs.hash("password", 10);
+  console.log(hashedPassword);
 };
 
 export const uploadProfilePicture = (req, res, next) => {
@@ -77,6 +78,7 @@ export const updateUserProfile = async (req, res, next) => {
       },
       {
         new: true,
+        timestamps: true,
       }
     );
 

@@ -63,17 +63,20 @@ export const updateUserProfile = async (req, res, next) => {
 
   try {
     const { username, avatar } = req.body;
+    console.log("Log from update", username, avatar, req.body.password);
+    const updateFields = {};
+
+    if (username) updateFields.username = username;
+    if (avatar) updateFields.avatar = avatar;
     if (req.body.password) {
-      req.body.password = await bcryptjs.hash(req.body.password, 10);
+      updateFields.password = await bcryptjs.hash(req.body.password, 10);
     }
 
     const updateUser = await User.findByIdAndUpdate(
       req.params.id,
       {
         $set: {
-          username,
-          password: req.body.password,
-          avatar,
+          ...updateFields,
         },
       },
       {
@@ -82,9 +85,71 @@ export const updateUserProfile = async (req, res, next) => {
       }
     );
 
+    if (!updateUser) {
+      return next(errorHandler(500, "User did not update successfully"));
+    }
+
     const { password, ...rest } = updateUser._doc;
 
     res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id) {
+    return next(
+      errorHandler(
+        401,
+        "Unauthorized Account - You can only update your account"
+      )
+    );
+  }
+
+  try {
+    const deletedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          accountStatus: "deleted",
+        },
+      },
+      {
+        new: true,
+        timestamps: true,
+      }
+    );
+
+    if (!deletedUser) {
+      return next(errorHandler(500, "User did not delete successfully"));
+    }
+
+    res.status(200).json("User has been deleted.");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const signOutUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id) {
+    return next(
+      errorHandler(
+        401,
+        "Unauthorized Account - You can only update your account"
+      )
+    );
+  }
+  try {
+    res.clearCookie("access_token", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+    });
+
+    res.set("Clear-Site-Data", '"cache", "cookies", "storage"');
+
+    res.status(200).json("Successfully signed out.");
   } catch (error) {
     next(error);
   }

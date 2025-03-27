@@ -21,6 +21,7 @@ export const signin = async (req, res, next) => {
   try {
     const validUser = await User.findOne({
       email,
+      accountStatus: "active",
     }).exec();
 
     if (!validUser) {

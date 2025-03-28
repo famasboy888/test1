@@ -2,7 +2,6 @@ import express from "express";
 import {
   deleteUser,
   getCloudinarySignature,
-  signOutUser,
   testHash,
   updateUserProfile,
   uploadProfilePicture,
@@ -15,8 +14,6 @@ const router = express.Router();
 router.patch("/profile/update/:id", verifyUserToken, updateUserProfile);
 
 router.patch("/profile/delete/:id", verifyUserToken, deleteUser);
-
-router.post("/profile/signout/:id", verifyUserToken, signOutUser);
 
 router.post("/profile/upload", uploadSingleImage, uploadProfilePicture);
 

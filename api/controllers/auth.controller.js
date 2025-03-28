@@ -125,3 +125,27 @@ export const google = async (req, res, next) => {
     next(error);
   }
 };
+
+export const signOutUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id) {
+    return next(
+      errorHandler(
+        401,
+        "Unauthorized Account - You can only update your account"
+      )
+    );
+  }
+  try {
+    res.clearCookie("access_token", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+    });
+
+    res.set("Clear-Site-Data", '"cache", "cookies", "storage"');
+
+    res.status(200).json("Successfully signed out.");
+  } catch (error) {
+    next(error);
+  }
+};

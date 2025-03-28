@@ -135,7 +135,7 @@ export default function Profile() {
     try {
       dispatch(signOutStart());
 
-      const res = await fetch(`/api/user/profile/signout/${currentUser?._id}`, {
+      const res = await fetch(`/api/auth/signout/${currentUser?._id}`, {
         method: "POST",
       });
 

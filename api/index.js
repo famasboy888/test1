@@ -6,6 +6,7 @@ import { exit } from "process";
 // Import routers here
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import authRouter from "./routes/auth.route.js";
+import listingRouter from "./routes/listing.route.js";
 import userRouter from "./routes/user.route.js";
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(cookieParser());
 // Use routers here
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/listing", listingRouter);
 
 // Use middlewares here
 app.use(errorMiddleware);

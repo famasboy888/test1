@@ -1,4 +1,51 @@
+import { useState } from "react";
+
 export default function CreateListing() {
+  const [files, setFiles] = useState<FileList | null>(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    address: "",
+    sale: false,
+    rent: false,
+    parking: false,
+    furnished: false,
+    offer: false,
+    bedrooms: 1,
+    bathrooms: 1,
+    regularPrice: 0,
+    discountedPrice: 0,
+    imageUrls: [],
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files;
+    if (!selectedFiles) {
+      setError("Please select images");
+      return;
+    }
+    if (selectedFiles && selectedFiles.length > 6) {
+      setError("You can only select maximum of 6 images");
+      return;
+    }
+    setFiles(selectedFiles);
+  };
+
+  const handleRemoveImage = (index: number) => {
+    if (!files) return;
+    const dt = new DataTransfer();
+
+    Array.from(files).forEach((file, idx) => {
+      if (idx !== index) {
+        dt.items.add(file);
+      }
+    });
+
+    setFiles(dt.files);
+  };
+
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">
@@ -111,24 +158,73 @@ export default function CreateListing() {
             </span>
             <div className="flex gap-4">
               <input
+                onChange={handleImageSelect}
                 className="p-3 border border-gray-300 rounded w-full cursor-pointer"
                 type="file"
                 id="images"
-                accept="image/w"
+                accept="image/*"
                 multiple
               />
-              <button className="p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80 cursor-pointer">
-                Upload
-              </button>
+            </div>
+            <div className="h-[300px] overflow-y-auto mt-6 pr-2">
+              {files &&
+                Array.from(files).map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex gap-4 mb-4 bg-gray-50 p-2 rounded"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-24 h-24 border rounded overflow-hidden flex-shrink-0">
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={`Preview ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-grow w-max-[200px]">
+                        <p className="text-sm text-gray-700 truncate">
+                          {file.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {(file.size / (1024 * 1024)).toFixed(2)} MB
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="bg-red-100 text-red-600 p-2 rounded hover:bg-red-200"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
         <div className="flex justify-center mt-6">
-          <button className="p-3 w-full bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 cursor-pointer">
+          <button
+            disabled={loading}
+            className="p-3 w-full bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 cursor-pointer"
+          >
             Create List
           </button>
         </div>
       </form>
+      {error && <div className="mt-4 text-red-600">{error}</div>}
     </main>
   );
 }

@@ -171,7 +171,7 @@ export default function CreateListing() {
                 Array.from(files).map((file, index) => (
                   <div
                     key={index}
-                    className="flex gap-4 mb-4 bg-gray-50 p-2 rounded"
+                    className="flex gap-4 mb-4 bg-gray-50 p-2 rounded justify-between"
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-24 h-24 border rounded overflow-hidden flex-shrink-0">
@@ -181,8 +181,8 @@ export default function CreateListing() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className="flex-grow w-max-[200px]">
-                        <p className="text-sm text-gray-700 truncate">
+                      <div className="flex-grow max-w-[200px]">
+                        <p className="text-sm text-gray-700 truncate overflow-hidden">
                           {file.name}
                         </p>
                         <p className="text-xs text-gray-500">

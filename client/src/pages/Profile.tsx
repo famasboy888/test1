@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   deleteProfileFailure,
   deleteProfileStart,
@@ -285,7 +286,14 @@ export default function Profile() {
         <button className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-85 cursor-pointer">
           Update
         </button>
+        <Link
+          className="bg-green-600 text-center text-white p-3 rounded-lg uppercase hover:opacity-95"
+          to={"/create-listing"}
+        >
+          Create Listing
+        </Link>
       </form>
+
       <div className="flex justify-between mt-5">
         <button
           onClick={handleDeleteUser}

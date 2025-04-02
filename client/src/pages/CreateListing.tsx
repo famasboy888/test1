@@ -1,25 +1,13 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { IListing } from "../types/listing/listing";
 import { RootState } from "../types/signin/reduxSignIn";
 
 export default function CreateListing() {
   const { currentUser } = useSelector((state: RootState) => state.user);
 
   const [files, setFiles] = useState<FileList | null>(null);
-  const [formData, setFormData] = useState<{
-    name: string;
-    description: string;
-    address: string;
-    listingType: string;
-    bedrooms: number;
-    bathrooms: number;
-    regularPrice: number;
-    discountedPrice: number;
-    offer: boolean;
-    parking: boolean;
-    furnished: boolean;
-    imageUrls: string[];
-  }>({
+  const [formData, setFormData] = useState<IListing>({
     name: "",
     description: "",
     address: "",

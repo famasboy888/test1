@@ -6,7 +6,20 @@ export default function CreateListing() {
   const { currentUser } = useSelector((state: RootState) => state.user);
 
   const [files, setFiles] = useState<FileList | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    description: string;
+    address: string;
+    listingType: string;
+    bedrooms: number;
+    bathrooms: number;
+    regularPrice: number;
+    discountedPrice: number;
+    offer: boolean;
+    parking: boolean;
+    furnished: boolean;
+    imageUrls: string[];
+  }>({
     name: "",
     description: "",
     address: "",
@@ -22,7 +35,8 @@ export default function CreateListing() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState(false);
   console.log(formData);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,21 +95,42 @@ export default function CreateListing() {
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!files || files.length === 0) {
+    if (!files || files.length < 1) {
       setError("Please select at least 1 image.");
+      return;
+    }
+
+    if (files.length > 6) {
+      setError("You can only upload a maximum of 6 images.");
       return;
     }
 
     try {
       setLoading(true);
       setError("");
+      setUploadError(false);
+
+      const updatedFormData = { ...formData };
+
+      for (const file of files) {
+        const imageUrl = await handleFileUpload(file);
+        if (!imageUrl) {
+          setError("Failed to upload Image: " + file.name);
+          setLoading(false);
+          return;
+        }
+
+        updatedFormData.imageUrls.push(imageUrl as string);
+      }
+
+      console.log("Form data before sending:", formData);
 
       const res = await fetch("/api/listing/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...formData, userRef: currentUser?._id }),
+        body: JSON.stringify({ ...updatedFormData, userRef: currentUser?._id }),
       });
 
       const data = await res.json();
@@ -114,6 +149,72 @@ export default function CreateListing() {
         setLoading(false);
       }
     }
+  };
+
+  const handleFileUpload = async (file: File) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+        if (!allowedTypes.includes(file.type)) {
+          setUploadError(true);
+          reject(new Error("Invalid file type"));
+          return;
+        }
+
+        fetch("/api/user/get-signature")
+          .then((signatureResponse) => signatureResponse.json())
+          .then(
+            ({ signature, timestamp, api_key, cloud_name, upload_preset }) => {
+              const uploadData = new FormData();
+              uploadData.append("file", file);
+              uploadData.append("upload_preset", upload_preset);
+              uploadData.append("api_key", api_key);
+              uploadData.append("timestamp", timestamp);
+              uploadData.append("signature", signature);
+              const xhr = new XMLHttpRequest();
+              xhr.open(
+                "POST",
+                `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+                true
+              );
+              xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                  const percentComplete = Math.round(
+                    (event.loaded / event.total) * 100
+                  );
+                  setUploadProgress(percentComplete);
+                }
+              };
+              xhr.onload = () => {
+                if (xhr.status === 200) {
+                  const response = JSON.parse(xhr.responseText);
+                  setUploadError(false);
+                  resolve(response.secure_url);
+                } else {
+                  console.error("Upload failed:", xhr.statusText);
+                  setUploadError(true);
+                  reject(new Error(xhr.statusText));
+                }
+              };
+              xhr.onerror = () => {
+                console.error("Upload failed");
+                setUploadError(true);
+                reject(new Error("Upload failed"));
+              };
+              xhr.send(uploadData);
+            }
+          )
+          .catch((error) => {
+            console.error(error);
+            reject(new Error(error.message));
+          });
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error);
+          reject(new Error(error.message));
+        }
+      }
+    });
   };
 
   return (

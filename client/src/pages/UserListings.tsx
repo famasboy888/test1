@@ -61,7 +61,7 @@ export default function UserListings() {
                 </div>
                 <div className="p-4">
                   <Link
-                    to={`/listing/${userList._id}`}
+                    to={`/listing/detail/${userList._id}`}
                     className="text-lg font-semibold text-blue-600 hover:text-blue-800 truncate block"
                   >
                     {userList.name}

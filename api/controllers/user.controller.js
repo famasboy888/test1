@@ -1,4 +1,5 @@
 import bcryptjs from "bcryptjs";
+import mongoose from "mongoose";
 import cloudinary from "../config/cloudinaryConfig.js";
 import Listing from "../models/listing.model.js";
 import User from "../models/user.model.js";
@@ -148,6 +149,37 @@ export const getUserListings = async (req, res, next) => {
     });
 
     res.status(200).json(listings);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserListingDetail = async (req, res, next) => {
+  const { listingId, userRef } = req.query;
+
+  console.log(listingId, userRef);
+
+  try {
+    if (req.user.id !== userRef) {
+      return next(
+        errorHandler(
+          401,
+          "Unauthorized Account - You can only update your account"
+        )
+      );
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(listingId)) {
+      return next(errorHandler(400, "Invalid listing is entered."));
+    }
+
+    const listing = await Listing.findById(listingId);
+
+    if (!listing) {
+      return next(errorHandler(404, "Listing not found."));
+    }
+
+    res.status(200).json(listing);
   } catch (error) {
     next(error);
   }

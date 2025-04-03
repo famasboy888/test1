@@ -2,6 +2,7 @@ import express from "express";
 import {
   deleteUser,
   getCloudinarySignature,
+  getUserListingDetail,
   getUserListings,
   testHash,
   updateUserProfile,
@@ -21,6 +22,8 @@ router.post("/profile/upload", uploadSingleImage, uploadProfilePicture);
 router.get("/get-signature", getCloudinarySignature);
 
 router.get("/listings/:id", verifyUserToken, getUserListings);
+
+router.get("/listing/detail", verifyUserToken, getUserListingDetail);
 
 router.get("/test", testHash);
 

@@ -11,5 +11,6 @@ export interface IListing {
   offer: boolean;
   parking: boolean;
   furnished: boolean;
+  userRef?: string;
   imageUrls: string[];
 }

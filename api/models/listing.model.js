@@ -60,6 +60,12 @@ const listingSchema = new mongoose.Schema(
       ref: User,
       required: true,
     },
+    listingStatus: {
+      type: String,
+      enum: ["available", "pending", "deleted"],
+      default: "available",
+      required: true,
+    },
   },
   { timestamps: true }
 );

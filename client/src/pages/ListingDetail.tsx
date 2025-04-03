@@ -62,11 +62,38 @@ export default function ListingDetail() {
     return () => controller.abort();
   }, [id, currentUser, navigator]);
 
+  const handleDeleteListing = async () => {
+    try {
+      const res = await fetch(`/api/user/listing/delete/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userRef: currentUser?._id }),
+      });
+
+      const data = await res.json();
+      if (data.success === false) {
+        setError(data.message);
+        return;
+      }
+
+      navigator("/user/listings");
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
+    }
+  };
+
   return (
     <div>
       {currentUser?._id === listing?.userRef && (
         <div>
-          <button className="p-3 w-full bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 disabled:cursor-not-allowed cursor-pointer">
+          <button
+            onClick={handleDeleteListing}
+            className="p-3 w-full bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 disabled:cursor-not-allowed cursor-pointer"
+          >
             Delete
           </button>
           <button className="p-3 w-full bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 disabled:cursor-not-allowed cursor-pointer">

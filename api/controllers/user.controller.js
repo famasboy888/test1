@@ -146,7 +146,10 @@ export const getUserListings = async (req, res, next) => {
 
     const listings = await Listing.find({
       userRef: req.user.id,
-    });
+      listingStatus: {
+        $ne: "deleted",
+      },
+    }).exec();
 
     res.status(200).json(listings);
   } catch (error) {
@@ -156,9 +159,6 @@ export const getUserListings = async (req, res, next) => {
 
 export const getUserListingDetail = async (req, res, next) => {
   const { listingId, userRef } = req.query;
-
-  console.log(listingId, userRef);
-
   try {
     if (req.user.id !== userRef) {
       return next(
@@ -173,13 +173,60 @@ export const getUserListingDetail = async (req, res, next) => {
       return next(errorHandler(400, "Invalid listing is entered."));
     }
 
-    const listing = await Listing.findById(listingId);
+    const listing = await Listing.findOne({
+      _id: listingId,
+      listingStatus: {
+        $ne: "deleted",
+      },
+    }).exec();
 
     if (!listing) {
       return next(errorHandler(404, "Listing not found."));
     }
 
     res.status(200).json(listing);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteUserListing = async (req, res, next) => {
+  const { userRef } = req.body;
+  const listingId = req.params.id;
+
+  console.log(userRef, listingId);
+  try {
+    if (req.user.id !== userRef) {
+      return next(
+        errorHandler(
+          401,
+          "Unauthorized Account - You can only update your account"
+        )
+      );
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(listingId)) {
+      return next(errorHandler(400, "Invalid listing is entered."));
+    }
+
+    const deletedListing = await Listing.findByIdAndUpdate(
+      listingId,
+      {
+        $set: {
+          listingStatus: "deleted",
+        },
+      },
+      {
+        new: true,
+        timestamps: true,
+      }
+    );
+
+    if (!deletedListing) {
+      return next(errorHandler(404, "Listing not found."));
+    }
+
+    res.status(200).json(deletedListing);
   } catch (error) {
     next(error);
   }

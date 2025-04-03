@@ -12,5 +12,6 @@ export interface IListing {
   parking: boolean;
   furnished: boolean;
   userRef?: string;
+  listingStatus: string;
   imageUrls: string[];
 }

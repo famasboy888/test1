@@ -51,7 +51,7 @@ export default function ListingDetail() {
 
         setListing(data);
       } catch (error) {
-        if (error instanceof Error) {
+        if (error instanceof Error && error.name !== "AbortError") {
           setError(error.message);
         }
       }
@@ -96,11 +96,15 @@ export default function ListingDetail() {
           >
             Delete
           </button>
-          <button className="p-3 w-full bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 disabled:cursor-not-allowed cursor-pointer">
+          <button
+            onClick={() => navigator(`/listing/update/${id}`)}
+            className="p-3 w-full bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 disabled:cursor-not-allowed cursor-pointer"
+          >
             Edit
           </button>
         </div>
       )}
+      <p>{error}</p>
     </div>
   );
 }

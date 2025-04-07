@@ -204,7 +204,7 @@ export default function UpdateListing() {
       }
 
       setLoading(false);
-      setFormData(data);
+      return navigator(`/listing/detail/${id}`);
     } catch (error) {
       if (error instanceof Error) {
         setError(

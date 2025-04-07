@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import SwiperCore from "swiper";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { IListing } from "../types/listing/listing";
 import { RootState } from "../types/signin/reduxSignIn";
 
 export default function ListingDetail() {
+  SwiperCore.use([Navigation, Pagination]);
+
   const navigator = useNavigate();
   const { currentUser } = useSelector((state: RootState) => state.user);
   const { id } = useParams();
   const [listing, setListing] = useState<IListing>();
   const [error, setError] = useState("");
-
-  console.log(listing);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!id || id === "") {
@@ -22,6 +29,9 @@ export default function ListingDetail() {
     const controller = new AbortController();
 
     const getListingDetail = async () => {
+      setLoading(true);
+      setError("");
+      setListing(undefined);
       try {
         console.log(
           "data:",
@@ -54,6 +64,8 @@ export default function ListingDetail() {
         if (error instanceof Error && error.name !== "AbortError") {
           setError(error.message);
         }
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -87,7 +99,25 @@ export default function ListingDetail() {
   };
 
   return (
-    <div>
+    <main>
+      {loading && <p className="text-center my-7 text-2xl">Loading...</p>}
+      {listing && (
+        <>
+          <Swiper navigation>
+            {listing.imageUrls.map((url) => (
+              <SwiperSlide key={url}>
+                <div
+                  className="h-[550px]"
+                  style={{
+                    background: `url(${url}) center no-repeat`,
+                    backgroundSize: "cover",
+                  }}
+                ></div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </>
+      )}
       {currentUser?._id === listing?.userRef && (
         <div>
           <button
@@ -104,7 +134,7 @@ export default function ListingDetail() {
           </button>
         </div>
       )}
-      <p>{error}</p>
-    </div>
+      {error && <p className="text-center my-7 text-2xl">{error}</p>}
+    </main>
   );
 }

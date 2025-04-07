@@ -6,6 +6,7 @@ import {
   getUserListingDetail,
   getUserListings,
   testHash,
+  updateUserListing,
   updateUserProfile,
   uploadProfilePicture,
 } from "../controllers/user.controller.js";
@@ -33,5 +34,7 @@ router.get("/listings/:id", verifyUserToken, getUserListings);
 router.get("/listing/detail", verifyUserToken, getUserListingDetail);
 
 router.patch("/listing/delete/:id", verifyUserToken, deleteUserListing);
+
+router.patch("/listing/update/:id", verifyUserToken, updateUserListing);
 
 export default router;

@@ -231,3 +231,74 @@ export const deleteUserListing = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateUserListing = async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return next(errorHandler(400, "Invalid listing is entered."));
+    }
+
+    const listing = await Listing.findById(req.params.id).exec();
+
+    if (!listing) {
+      return next(errorHandler(404, "Listing not found."));
+    }
+
+    if (req.user.id !== listing.userRef.toString()) {
+      return next(
+        errorHandler(
+          401,
+          "Unauthorized Account - You can only update your account"
+        )
+      );
+    }
+
+    const {
+      name,
+      description,
+      address,
+      regularPrice,
+      discountedPrice,
+      bathrooms,
+      bedrooms,
+      furnished,
+      parking,
+      listingType,
+      offer,
+      imageUrls,
+    } = req.body;
+
+    const updateFields = {};
+
+    if (name) updateFields.name = name;
+    if (description) updateFields.description = description;
+    if (address) updateFields.address = address;
+    if (regularPrice) updateFields.regularPrice = regularPrice;
+    if (discountedPrice) updateFields.discountedPrice = discountedPrice;
+    if (bathrooms) updateFields.bathrooms = bathrooms;
+    if (bedrooms) updateFields.bedrooms = bedrooms;
+    if (furnished) updateFields.furnished = furnished;
+    if (parking) updateFields.parking = parking;
+    if (listingType) updateFields.listingType = listingType;
+    if (offer) updateFields.offer = offer;
+    if (imageUrls) updateFields.imageUrls = imageUrls;
+
+    const updatedListing = await Listing.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          ...updateFields,
+        },
+      },
+      { new: true, timestamps: true }
+    );
+
+    if (!updatedListing) {
+      return next(errorHandler(500, "Listing did not update successfully"));
+    }
+
+    res.status(200).json(updatedListing);
+  } catch (error) {
+    next(error);
+  }
+};

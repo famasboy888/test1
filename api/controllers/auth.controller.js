@@ -47,7 +47,7 @@ export const signin = async (req, res, next) => {
       httpOnly: true,
       secure: false,
       sameSite: "strict",
-      maxAge: 15 * 60 * 1000,
+      // maxAge: 15 * 60 * 1000,
     });
 
     const { password: hashedPassword, ...rest } = validUser._doc;
@@ -80,7 +80,7 @@ export const google = async (req, res, next) => {
         httpOnly: true,
         secure: false,
         sameSite: "strict",
-        maxAge: 15 * 60 * 1000,
+        // maxAge: 15 * 60 * 1000,
       });
 
       res.status(200).json(rest);
@@ -113,7 +113,7 @@ export const google = async (req, res, next) => {
           httpOnly: true,
           secure: false,
           sameSite: "strict",
-          maxAge: 15 * 60 * 1000,
+          // maxAge: 15 * 60 * 1000,
         });
 
         res.status(200).json(rest);

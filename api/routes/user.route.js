@@ -5,6 +5,7 @@ import {
   getCloudinarySignature,
   getUserListingDetail,
   getUserListings,
+  getUserOfListing,
   testHash,
   updateUserListing,
   updateUserProfile,
@@ -36,5 +37,9 @@ router.get("/listing/detail", verifyUserToken, getUserListingDetail);
 router.patch("/listing/delete/:id", verifyUserToken, deleteUserListing);
 
 router.patch("/listing/update/:id", verifyUserToken, updateUserListing);
+
+//User
+
+router.get("/:id", verifyUserToken, getUserOfListing);
 
 export default router;

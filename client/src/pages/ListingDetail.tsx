@@ -199,26 +199,27 @@ export default function ListingDetail() {
                 Contact landlord
               </button>
             )}
-            {contact && <Contact />}
+            {contact && <Contact listing={listing} />}
+            {currentUser?._id === listing?.userRef && (
+              <div className="flex justify-between mt-5">
+                <button
+                  onClick={handleDeleteListing}
+                  className="text-red-700 p-2 rounded-lg hover:bg-gray-200 cursor-pointer"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => navigate(`/listing/update/${id}`)}
+                  className="text-red-700 p-2 rounded-lg hover:bg-gray-200 cursor-pointer"
+                >
+                  Edit
+                </button>
+              </div>
+            )}
           </div>
         </>
       )}
-      {currentUser?._id === listing?.userRef && (
-        <div>
-          <button
-            onClick={handleDeleteListing}
-            className="p-3 w-full bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 disabled:cursor-not-allowed cursor-pointer"
-          >
-            Delete
-          </button>
-          <button
-            onClick={() => navigate(`/listing/update/${id}`)}
-            className="p-3 w-full bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 disabled:cursor-not-allowed cursor-pointer"
-          >
-            Edit
-          </button>
-        </div>
-      )}
+
       {error && <p className="text-center my-7 text-2xl">{error}</p>}
     </main>
   );

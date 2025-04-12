@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import SwiperCore from "swiper";
+
 
 import {
   FaBath,
@@ -11,6 +11,7 @@ import {
   FaParking,
   FaShare,
 } from "react-icons/fa";
+import SwiperCore from "swiper";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { IListing } from "../types/listing/listing";

@@ -19,15 +19,15 @@ export const createListing = async (req, res, next) => {
 
 export const getListings = async (req, res, next) => {
   try {
-    const limit = parseInt(req.query.limit?.trim()) ?? 10;
-    const startIndex = parseInt(req.query.startIndex?.trim()) ?? 0;
+    const limit = parseInt(req.query.limit?.trim()) || 9;
+    const startIndex = parseInt(req.query.startIndex?.trim()) || 0;
     const offer = req.query.offer === true;
     const furnished = req.query.furnished === true;
     const parking = req.query.parking === true;
-    const listingType = req.query.type?.trim() ?? "all";
-    const searchTerm = req.query.searchTerm?.trim() ?? "";
-    const sortBy = req.query.sortBy?.trim() ?? "createdAt";
-    const sortOrder = req.query.sortOrder?.trim() ?? "desc";
+    const listingType = req.query.type?.trim() || "all";
+    const searchTerm = req.query.searchTerm?.trim() || "";
+    const sortBy = req.query.sortBy?.trim() || "createdAt";
+    const sortOrder = req.query.sortOrder?.trim() || "desc";
     let offerQuery = {};
     let furnishedQuery = {};
     let parkingQuery = {};

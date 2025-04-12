@@ -17,6 +17,7 @@ export default function Search() {
   const [listings, setListings] = useState<IListing[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showMore, setShowMore] = useState(false);
 
   console.log(listings);
 
@@ -47,13 +48,18 @@ export default function Search() {
       try {
         setLoading(true);
         setError("");
+        setShowMore(false);
         const res = await fetch(`/api/listing/get-listings?${searchQuery}`, {
           method: "GET",
           signal: controller.signal,
         });
 
         const data = await res.json();
-
+        if (data.length > 8) {
+          setShowMore(true);
+        } else {
+          setShowMore(false);
+        }
         setListings(data);
       } catch (error) {
         if (error instanceof Error && error.name === "AbortError") {
@@ -127,6 +133,44 @@ export default function Search() {
       navigate(`/search?${queryString}`);
     } catch (error) {
       console.error("Error while searching listings:", error);
+    }
+  };
+
+  const onShowMoreClick = async () => {
+    const numberOfListings = listings?.length;
+    const startIndex = numberOfListings ? numberOfListings : 0;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex.toString());
+    const searchQuery = urlParams.toString();
+
+    const controller = new AbortController();
+
+    try {
+      setLoading(true);
+      setError("");
+
+      const res = await fetch(`/api/listing/get-listings?${searchQuery}`, {
+        method: "GET",
+        signal: controller.signal,
+      });
+
+      const data = await res.json();
+      if (data.success === false) {
+        setError(data.message);
+        return;
+      }
+
+      if (data.length < 9) {
+        setShowMore(false);
+      }
+      setListings((prev) => [...prev, ...data]);
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") {
+        setError(error.message);
+      }
+    } finally {
+      setLoading(false);
+      controller.abort();
     }
   };
 
@@ -252,6 +296,14 @@ export default function Search() {
               listings.map((listing) => (
                 <ListingCardComponent key={listing._id} listing={listing} />
               ))}
+            {showMore && (
+              <button
+                onClick={onShowMoreClick}
+                className="text-green-700 hover:underline p-7 text-center w-full"
+              >
+                Show More
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -30,7 +30,7 @@ export default function Header() {
     if (searchTermFromUrl) {
       setSearchTerm(searchTermFromUrl);
     }
-  }, []);
+  }, [location.search]);
 
   return (
     <header className="bg-slate-200 shadow-md">
@@ -52,7 +52,7 @@ export default function Header() {
             placeholder="Search..."
             className="bg-transparent focus:outline-none w-24 sm:w-64"
           />
-          <button>
+          <button className="cursor-pointer p-2 rounded-lg hover:bg-slate-300 transition duration-200 ease-in-out">
             <FaSearch className="text-slate-600" />
           </button>
         </form>

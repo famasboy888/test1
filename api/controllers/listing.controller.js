@@ -65,6 +65,9 @@ export const getListings = async (req, res, next) => {
       furnished: furnishedQuery,
       parking: parkingQuery,
       listingType: listingTypeQuery,
+      listingStatus: {
+        $ne: "deleted",
+      },
     })
       .sort({
         [sortBy]: sortOrder,

@@ -9,8 +9,6 @@ export default function UserListings() {
   const [userListings, setUserListings] = useState<IListing[]>([]);
   const [error, setError] = useState("");
 
-  console.log(userListings);
-
   useEffect(() => {
     const controller = new AbortController();
 

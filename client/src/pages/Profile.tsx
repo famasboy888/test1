@@ -30,8 +30,6 @@ export default function Profile() {
     avatar: "",
   });
 
-  console.log(formData);
-
   // Clean up to reduce memory leaks
   useEffect(() => {
     return () => {

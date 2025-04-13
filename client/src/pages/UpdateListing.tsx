@@ -38,12 +38,6 @@ export default function UpdateListing() {
     const controller = new AbortController();
     const getListingDetail = async () => {
       try {
-        console.log(
-          "data:",
-          `/api/user/listing/detail?${id}`,
-          currentUser?._id
-        );
-
         const params = new URLSearchParams();
 
         params.set("listingId", id);
@@ -58,7 +52,6 @@ export default function UpdateListing() {
         );
 
         const data = await res.json();
-        console.log("data", data);
         if (data.success === false) {
           navigator("/not-found");
           return;
@@ -185,8 +178,6 @@ export default function UpdateListing() {
           updatedFormData.imageUrls.push(imageUrl as string);
         }
       }
-
-      console.log("Form data before sending:", formData);
 
       const res = await fetch(`/api/user/listing/update/${id}`, {
         method: "PATCH",

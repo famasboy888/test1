@@ -26,7 +26,6 @@ export default function CreateListing() {
   const [error, setError] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState(false);
-  console.log(formData);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
@@ -111,8 +110,6 @@ export default function CreateListing() {
 
         updatedFormData.imageUrls.push(imageUrl as string);
       }
-
-      console.log("Form data before sending:", formData);
 
       const res = await fetch("/api/listing/create", {
         method: "POST",

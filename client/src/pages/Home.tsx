@@ -14,8 +14,6 @@ export default function Home() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  console.log(offerListings, saleListings, rentListings);
-
   useEffect(() => {
     const controller = new AbortController();
 

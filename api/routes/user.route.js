@@ -6,7 +6,6 @@ import {
   getUserListingDetail,
   getUserListings,
   getUserOfListing,
-  testHash,
   updateUserListing,
   updateUserProfile,
   uploadProfilePicture,
@@ -24,9 +23,7 @@ router.patch("/profile/delete/:id", verifyUserToken, deleteUser);
 
 router.post("/profile/upload", uploadSingleImage, uploadProfilePicture);
 
-router.get("/get-signature", getCloudinarySignature);
-
-router.get("/test", testHash);
+router.get("/get-signature", verifyUserToken, getCloudinarySignature);
 
 //User Listings
 

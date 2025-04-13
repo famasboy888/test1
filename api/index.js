@@ -4,6 +4,7 @@ import express from "express";
 import mongoose from "mongoose";
 import { exit } from "process";
 // Import routers here
+import path from "path";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import authRouter from "./routes/auth.route.js";
 import listingRouter from "./routes/listing.route.js";
@@ -19,6 +20,14 @@ app.use(cookieParser());
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/listing", listingRouter);
+
+const _dirname = path.resolve();
+
+app.use(express.static(path.join(_dirname, "/client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(_dirname, "client", "dist", "index.html"));
+});
 
 // Use middlewares here
 app.use(errorMiddleware);

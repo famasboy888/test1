@@ -447,6 +447,23 @@ export default function UpdateListing() {
                 multiple
               />
             </div>
+            <p className="flex justify-center">
+              {uploadError && (
+                <span className="text-red-500">
+                  There was an error uploading the file.
+                  <br />
+                  Check image format is (jpg, jpeg, png).
+                </span>
+              )}
+              {!uploadError && uploadProgress > 0 && uploadProgress < 100 && (
+                <span className="text-slate-700">
+                  {`Uploading ${uploadProgress}%`}
+                </span>
+              )}
+              {!uploadError && uploadProgress === 100 && (
+                <span className="text-green-700">Uploaded successfully</span>
+              )}
+            </p>
             <div className="h-[300px] overflow-y-auto mt-6 pr-2">
               {files &&
                 Array.from(files).map((file, index) => (
@@ -506,6 +523,7 @@ export default function UpdateListing() {
         </div>
       </form>
       {error && <div className="mt-4 text-red-600">{error}</div>}
+      {uploadError && <div className="mt-4 text-red-600">{uploadError}</div>}
     </main>
   );
 }

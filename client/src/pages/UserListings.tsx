@@ -77,6 +77,7 @@ export default function UserListings() {
           <p>You do not have any listings yet.</p>
         )}
       </div>
+      {error && <div className="mt-4 text-red-600">{error}</div>}
     </main>
   );
 }

@@ -92,94 +92,101 @@ export default function Home() {
           Get Started
         </Link>
       </div>
-      <div>
-        <Swiper navigation pagination>
-          {offerListings &&
-            offerListings.length > 0 &&
-            offerListings.map((offerListing) => (
-              <SwiperSlide key={offerListing._id}>
-                <div
-                  className="h-[500px]"
-                  style={{
-                    background: `url(${offerListing.imageUrls[0]}) center no-repeat`,
-                    backgroundSize: "cover",
-                  }}
-                ></div>
-              </SwiperSlide>
-            ))}
-        </Swiper>
-      </div>
-      <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">
-        {offerListings && offerListings.length > 0 && (
-          <div className="">
-            <div className="my-3">
-              <h2 className="text-2xl font-semibold text-slate-600">
-                Recent Offers
-              </h2>
-              <Link
-                className="text-sm text-blue-800 hover:underline"
-                to={"/search?offer=true"}
-              >
-                Show More Offers
-              </Link>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              {offerListings.map((offerListing) => (
-                <ListingCardComponent
-                  listing={offerListing}
-                  key={offerListing._id}
-                />
-              ))}
-            </div>
+      {loading && <p className="text-center my-7 text-2xl">Loading...</p>}
+      {!loading && (
+        <>
+          <div>
+            <Swiper navigation pagination>
+              {offerListings &&
+                offerListings.length > 0 &&
+                offerListings.map((offerListing) => (
+                  <SwiperSlide key={offerListing._id}>
+                    <div
+                      className="h-[500px]"
+                      style={{
+                        background: `url(${offerListing.imageUrls[0]}) center no-repeat`,
+                        backgroundSize: "cover",
+                      }}
+                    ></div>
+                  </SwiperSlide>
+                ))}
+            </Swiper>
           </div>
-        )}
-        {rentListings && rentListings.length > 0 && (
-          <div className="">
-            <div className="my-3">
-              <h2 className="text-2xl font-semibold text-slate-600">
-                Recent Places for Rent
-              </h2>
-              <Link
-                className="text-sm text-blue-800 hover:underline"
-                to={"/search?listingType=rent"}
-              >
-                Show More Rent
-              </Link>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              {rentListings.map((rentListing) => (
-                <ListingCardComponent
-                  listing={rentListing}
-                  key={rentListing._id}
-                />
-              ))}
-            </div>
+          <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">
+            {offerListings && offerListings.length > 0 && (
+              <div className="">
+                <div className="my-3">
+                  <h2 className="text-2xl font-semibold text-slate-600">
+                    Recent Offers
+                  </h2>
+                  <Link
+                    className="text-sm text-blue-800 hover:underline"
+                    to={"/search?offer=true"}
+                  >
+                    Show More Offers
+                  </Link>
+                </div>
+                <div className="flex flex-wrap gap-4">
+                  {offerListings.map((offerListing) => (
+                    <ListingCardComponent
+                      listing={offerListing}
+                      key={offerListing._id}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            {rentListings && rentListings.length > 0 && (
+              <div className="">
+                <div className="my-3">
+                  <h2 className="text-2xl font-semibold text-slate-600">
+                    Recent Places for Rent
+                  </h2>
+                  <Link
+                    className="text-sm text-blue-800 hover:underline"
+                    to={"/search?listingType=rent"}
+                  >
+                    Show More Rent
+                  </Link>
+                </div>
+                <div className="flex flex-wrap gap-4">
+                  {rentListings.map((rentListing) => (
+                    <ListingCardComponent
+                      listing={rentListing}
+                      key={rentListing._id}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            {saleListings && saleListings.length > 0 && (
+              <div className="">
+                <div className="my-3">
+                  <h2 className="text-2xl font-semibold text-slate-600">
+                    Recent Places for Sale
+                  </h2>
+                  <Link
+                    className="text-sm text-blue-800 hover:underline"
+                    to={"/search?listingType=sale"}
+                  >
+                    Show More for Sale
+                  </Link>
+                </div>
+                <div className="flex flex-wrap gap-4">
+                  {saleListings.map((saleListing) => (
+                    <ListingCardComponent
+                      listing={saleListing}
+                      key={saleListing._id}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        )}
-        {saleListings && saleListings.length > 0 && (
-          <div className="">
-            <div className="my-3">
-              <h2 className="text-2xl font-semibold text-slate-600">
-                Recent Places for Sale
-              </h2>
-              <Link
-                className="text-sm text-blue-800 hover:underline"
-                to={"/search?listingType=sale"}
-              >
-                Show More for Sale
-              </Link>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              {saleListings.map((saleListing) => (
-                <ListingCardComponent
-                  listing={saleListing}
-                  key={saleListing._id}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+        </>
+      )}
+
+      {error && <div className="mt-4 text-red-600">{error}</div>}
     </main>
   );
 }

@@ -63,6 +63,7 @@ export default function Contact({ listing }: { listing: IListing }) {
           </Link>
         </div>
       )}
+      {error && <p className="text-red-700">{error}</p>}
     </>
   );
 }

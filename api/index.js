@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 import { exit } from "process";
+import responseTime from "response-time";
 // Import routers here
 import path from "path";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
@@ -15,6 +16,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(responseTime());
 
 // Use routers here
 app.use("/api/user", userRouter);

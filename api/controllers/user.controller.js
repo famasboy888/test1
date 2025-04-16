@@ -4,6 +4,12 @@ import cloudinary from "../config/cloudinaryConfig.js";
 import Listing from "../models/listing.model.js";
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
+import {
+  CACHE_TIMES,
+  getCache,
+  keyBuilder,
+  setCache,
+} from "../utils/redis.util.js";
 
 export const testHash = async (req, res) => {
   const hashedPassword = await bcryptjs.hash("password", 10);
@@ -134,6 +140,7 @@ export const deleteUser = async (req, res, next) => {
 };
 
 export const getUserListings = async (req, res, next) => {
+  console.time("getUserListings::Request Duration");
   try {
     if (req.user.id !== req.params.id) {
       return next(
@@ -144,12 +151,26 @@ export const getUserListings = async (req, res, next) => {
       );
     }
 
+    //Redis
+    const cacheKey = keyBuilder.users.listings(req.user.id);
+    const cacheData = await getCache(cacheKey);
+    if (cacheData) {
+      console.log("getUserListings::Cache HIT");
+      console.timeEnd("getUserListings::Request Duration");
+      return res.status(200).json(cacheData);
+    }
+
+    console.log("getUserListings::Cache MISS");
+
     const listings = await Listing.find({
       userRef: req.user.id,
       listingStatus: {
         $ne: "deleted",
       },
     }).exec();
+
+    await setCache(cacheKey, listings, CACHE_TIMES.USER_LISTINGS);
+    console.timeEnd("getUserListings::Request Duration");
 
     res.status(200).json(listings);
   } catch (error) {
@@ -158,13 +179,14 @@ export const getUserListings = async (req, res, next) => {
 };
 
 export const getUserListingDetail = async (req, res, next) => {
+  console.time("getUserListingDetail::Request Duration");
   const { listingId, userRef } = req.query;
   try {
     if (req.user.id !== userRef) {
       return next(
         errorHandler(
           401,
-          "Unauthorized Account - You can only update your account"
+          "Unauthorized Account - You can only update your own listing"
         )
       );
     }
@@ -172,6 +194,16 @@ export const getUserListingDetail = async (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(listingId)) {
       return next(errorHandler(400, "Invalid listing is entered."));
     }
+
+    //Redis
+    const cacheKey = keyBuilder.listings.details(listingId);
+    const cacheData = await getCache(cacheKey);
+    if (cacheData) {
+      console.log("getUserListingDetail::Cache HIT");
+      console.timeEnd("getUserListingDetail::Request Duration");
+      return res.status(200).json(cacheData);
+    }
+    console.log("getUserListingDetail::Cache MISS");
 
     const listing = await Listing.findOne({
       _id: listingId,
@@ -183,6 +215,9 @@ export const getUserListingDetail = async (req, res, next) => {
     if (!listing) {
       return next(errorHandler(404, "Listing not found."));
     }
+
+    await setCache(cacheKey, listing, CACHE_TIMES.LISTING_DETAIL);
+    console.timeEnd("getUserListingDetail::Request Duration");
 
     res.status(200).json(listing);
   } catch (error) {

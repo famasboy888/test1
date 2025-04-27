@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import { exit } from "process";
 import responseTime from "response-time";
 // Import routers here
+import helmet from "helmet";
 import path from "path";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { authLimiter } from "./middlewares/rateLimiter.middleware.js";
@@ -18,6 +19,22 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(responseTime());
+
+// Security header - HELMET
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        connectSrc: ["'self'", "https://clean-anteater-11470.upstash.io"],
+        imgSrc: ["'self'", "https:", "data:", "blob:"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+      },
+    },
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
 
 // Apply ratee limitter
 app.use("/api/auth", authLimiter);

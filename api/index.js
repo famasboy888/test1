@@ -7,6 +7,7 @@ import responseTime from "response-time";
 // Import routers here
 import path from "path";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
+import { authLimiter } from "./middlewares/rateLimiter.middleware.js";
 import authRouter from "./routes/auth.route.js";
 import listingRouter from "./routes/listing.route.js";
 import userRouter from "./routes/user.route.js";
@@ -17,6 +18,9 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(responseTime());
+
+// Apply ratee limitter
+app.use("/api/auth", authLimiter);
 
 // Use routers here
 app.use("/api/user", userRouter);

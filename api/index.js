@@ -7,6 +7,7 @@ import responseTime from "response-time";
 // Import routers here
 import helmet from "helmet";
 import path from "path";
+import { corsMiddleware } from "./config/corsConfig.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { authLimiter } from "./middlewares/rateLimiter.middleware.js";
 import authRouter from "./routes/auth.route.js";
@@ -19,6 +20,12 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(responseTime());
+
+// Use middlewares here
+app.use(errorMiddleware);
+
+// CORS middleware
+app.use(corsMiddleware);
 
 // Security header - HELMET
 app.use(
@@ -51,9 +58,6 @@ app.use(express.static(path.join(_dirname, "/client/dist")));
 app.get("*", (req, res) => {
   res.sendFile(path.join(_dirname, "client", "dist", "index.html"));
 });
-
-// Use middlewares here
-app.use(errorMiddleware);
 
 mongoose
   .connect(process.env.MONGO_URI)

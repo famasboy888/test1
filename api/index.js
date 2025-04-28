@@ -7,7 +7,9 @@ import responseTime from "response-time";
 // Import routers here
 import helmet from "helmet";
 import path from "path";
+import swaggerUI from "swagger-ui-express";
 import { corsMiddleware } from "./config/corsConfig.js";
+import specs from "./config/swaggerConfig.js";
 import logger from "./config/winstonLoggerConfig.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { morganMiddleware } from "./middlewares/morgan.middleware.js";
@@ -25,6 +27,9 @@ app.use(responseTime());
 
 // Use middlewares here
 app.use(errorMiddleware);
+
+// Swagger API documentation
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 //Monitoring and loggins
 app.use(morganMiddleware);

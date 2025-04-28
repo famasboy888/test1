@@ -8,7 +8,9 @@ import responseTime from "response-time";
 import helmet from "helmet";
 import path from "path";
 import { corsMiddleware } from "./config/corsConfig.js";
+import logger from "./config/winstonLoggerConfig.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
+import { morganMiddleware } from "./middlewares/morgan.middleware.js";
 import { authLimiter } from "./middlewares/rateLimiter.middleware.js";
 import authRouter from "./routes/auth.route.js";
 import listingRouter from "./routes/listing.route.js";
@@ -23,6 +25,9 @@ app.use(responseTime());
 
 // Use middlewares here
 app.use(errorMiddleware);
+
+//Monitoring and loggins
+app.use(morganMiddleware);
 
 // CORS middleware
 app.use(corsMiddleware);
@@ -62,12 +67,15 @@ app.get("*", (req, res) => {
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
+    logger.info("MongoDB connected");
     console.log("MongoDB connected");
     app.listen(3000, () => {
+      logger.info(`Server is running on port 3000`);
       console.log("Server is running on port 3000");
     });
   })
   .catch((err) => {
+    logger.error(err);
     console.error(err);
     exit(1);
   });

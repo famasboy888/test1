@@ -109,10 +109,22 @@ const listingSchema = new mongoose.Schema(
     regularPrice: {
       type: Number,
       required: true,
+      validate: {
+        validator: function (value) {
+          return value > 0;
+        },
+        message: "Price must be a positive number",
+      },
     },
     discountedPrice: {
       type: Number,
       required: true,
+      validate: {
+        validator: function (value) {
+          return value <= this.regularPrice;
+        },
+        message: "Discounted price must be less than or equal to regular price",
+      },
     },
     bathrooms: {
       type: Number,

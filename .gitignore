@@ -25,3 +25,9 @@ dist-ssr
 
 #ENV
 .env
+
+# Test coverage
+coverage/
+.nyc_output/
+junit.xml
+coverage.json

@@ -69,12 +69,14 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(_dirname, "client", "dist", "index.html"));
 });
 
+let server;
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     logger.info("MongoDB connected");
     console.log("MongoDB connected");
-    app.listen(3000, () => {
+    server = app.listen(3000, () => {
       logger.info(`Server is running on port 3000`);
       console.log("Server is running on port 3000");
     });
@@ -84,3 +86,5 @@ mongoose
     console.error(err);
     exit(1);
   });
+
+export { app, server };

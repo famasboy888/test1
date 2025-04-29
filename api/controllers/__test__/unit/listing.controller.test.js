@@ -1,17 +1,17 @@
 import mongoose from "mongoose";
-import Listing from "../../models/listing.model.js";
-import { errorHandler } from "../../utils/error.js";
+import Listing from "../../../models/listing.model.js";
+import { errorHandler } from "../../../utils/error.js";
 import {
   getCache,
   invalidateCache,
   keyBuilder,
-} from "../../utils/redis.util.js";
-import { createListing, getListings } from "../listing.controller.js";
+} from "../../../utils/redis.util.js";
+import { createListing, getListings } from "../../listing.controller.js";
 
 // Mock dependencies
-jest.mock("../../models/listing.model.js");
-jest.mock("../../utils/redis.util.js");
-jest.mock("../../utils/error.js", () => ({
+jest.mock("../../../models/listing.model.js");
+jest.mock("../../../utils/redis.util.js");
+jest.mock("../../../utils/error.js", () => ({
   errorHandler: jest.fn((status, msg) => ({
     status,
     message: msg,

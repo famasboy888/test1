@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Listing from "../listing.model.js";
+import Listing from "../../listing.model.js";
 
 describe("Listing Model Test", () => {
   // Could users break this?

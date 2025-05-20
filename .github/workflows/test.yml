@@ -1,14 +1,20 @@
-name: CI/CD Pipeline
+name: Testing Pipeline
 
 on:
   push:
-    branches: [main]
+    branches:
+      - dev
+      - staging
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - dev
+      - staging
+      - main
 
 jobs:
   test:
-    name: Test
+    name: Running Unit and Integration Tests
     runs-on: ubuntu-latest
 
     env:

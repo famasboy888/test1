@@ -19,7 +19,7 @@ jobs:
         uses: tj-actions/verify-changed-files@v20.0.4
         with:
           files: |
-            api
+            api/**
             package.json
             package-lock.json
             .releaserc.json

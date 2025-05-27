@@ -9,17 +9,15 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
     steps:
       - uses: actions/checkout@v4
 
       - name: Verify API changed files
-        id: verify
-        uses: tj-actions/verify-changed-files@v20.0.4
+        id: verify_changed_files
+        uses: tj-actions/verify-changed-files@a1c6acee9df209257a246f2cc6ae8cb6581c1edf
         with:
           files: |
-            api/**
+            api
             package.json
             package-lock.json
             .releaserc.json
@@ -30,7 +28,7 @@ jobs:
             jest.setup.js
 
       - name: Semantic release (API)
-        if: steps.verify.outputs.changed_files == 'true'
+        if: steps.verify_changed_files.outputs.files_changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release

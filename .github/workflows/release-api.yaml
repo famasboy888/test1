@@ -12,8 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: ls files
-        run: ls -la
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
 
       - name: Verify API changed files
         id: changed-files
@@ -29,6 +32,10 @@ jobs:
             .babelrc
             jest.config.js
             jest.setup.js
+
+      - name: Install dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: npm ci
 
       - name: Semantic release (API)
         if: steps.changed-files.outputs.any_changed == 'true'

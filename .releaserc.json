@@ -29,7 +29,7 @@
       }
     ],
     [
-      "@semantic-release/git",
+      "@semantic-release/github",
       {
         "assets": ["package.json", "CHANGELOG.md"],
         "message": "chore(api): release ${nextRelease.version} [skip ci]"

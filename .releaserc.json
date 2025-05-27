@@ -1,0 +1,39 @@
+{
+  "branches": [
+    "main",
+    {
+      "name": "staging",
+      "channel": "staging",
+      "prerelease": true
+    },
+    {
+      "name": "dev",
+      "channel": "dev",
+      "prerelease": true
+    }
+  ],
+  "tagFormat": "api-v${version}",
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md"
+      }
+    ],
+    [
+      "@semantic-release/npm",
+      {
+        "pkgRoot": "."
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["package.json", "CHANGELOG.md"],
+        "message": "chore(api): release ${nextRelease.version} [skip ci]"
+      }
+    ]
+  ]
+}

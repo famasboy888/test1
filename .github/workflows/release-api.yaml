@@ -1,0 +1,36 @@
+name: Release API
+
+on:
+  workflow_run:
+    workflows: ["Testing Pipeline"]
+    types:
+      - completed
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify API changed files
+        id: verify
+        uses: tj-actions/verify-changed-files@v20.0.4
+        with:
+          files: |
+            api
+            package.json
+            package-lock.json
+            .releaserc.json
+            Dockerfile
+            .dockerignore
+            .babelrc
+            jest.config.js
+            jest.setup.js
+
+      - name: Semantic release (API)
+        if: steps.verify.outputs.changed_files == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release

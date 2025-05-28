@@ -1,3 +1,12 @@
+# [1.1.0](https://github.com/famasboy888/test1/compare/api-v1.0.0...api-v1.1.0) (2025-05-28)
+
+
+### Features
+
+* **api:** fix workflow + test workflow v13 ([f395969](https://github.com/famasboy888/test1/commit/f395969ceed17e9e53b64b96205edf5dc33bebb9))
+* **api:** fix workflow + test workflow v14 ([e0fd487](https://github.com/famasboy888/test1/commit/e0fd4876289f7040a093e8600cb5e8231537ed8e))
+* **api:** fix workflow + test workflow v15 ([e5060d1](https://github.com/famasboy888/test1/commit/e5060d19bece7c8ab5db22b73bc92a41fbd65a09))
+
 # 1.0.0 (2025-05-27)
 
 

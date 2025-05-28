@@ -8,6 +8,7 @@ const allowedOrigins = {
   staging: process.env.CLIENT_URL_STAGING,
   production: process.env.CLIENT_URL_PROD,
 };
+
 const selectedOrigin =
   allowedOrigins[process.env.APP_ENV] || "http://localhost:5173";
 

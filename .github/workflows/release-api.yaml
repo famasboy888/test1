@@ -2,47 +2,41 @@ name: Release API
 
 on:
   workflow_run:
-    workflows: ["Testing Pipeline"]
+    workflows: ["Test"]
     types:
       - completed
 
 jobs:
-  release:
-    permissions:
-      contents: write
-      pull-requests: write
-      issues: write
-    runs-on: ubuntu-latest
+  changed_files:
+    runs-on: ubuntu-latest # windows-latest || macos-latest
+    name: Test changed-files
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Verify API changed files
+      # -----------------------------------------------------------------------------------------------------------
+      # Example 1
+      # -----------------------------------------------------------------------------------------------------------
+      - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c
+        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c # v46
         with:
-          files: |
-            api/**
-            package.json
-            package-lock.json
-            .releaserc.json
-            Dockerfile
-            .dockerignore
-            .babelrc
-            jest.config.js
-            jest.setup.js
+          files_yaml: |
+            api:
+              - api/**
+              - package.json
+              - package-lock.json
+              - .releaserc.json
+              - Dockerfile
+              - .dockerignore
+              - .babelrc
+              - jest.config.js
+              - jest.setup.js
 
-      - name: Install dependencies
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: npm ci
-
-      - name: Semantic release (API)
-        if: steps.changed-files.outputs.any_changed == 'true'
+      - name: Check if any files were changed
+        if: steps.changed-files.outputs.api_any_changed == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.api_all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done

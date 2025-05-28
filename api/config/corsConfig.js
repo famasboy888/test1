@@ -9,7 +9,6 @@ const allowedOrigins = {
   production: process.env.CLIENT_URL_PROD,
 };
 
-// This is for workflow testing purpose
 const selectedOrigin =
   allowedOrigins[process.env.APP_ENV] || "http://localhost:5173";
 
